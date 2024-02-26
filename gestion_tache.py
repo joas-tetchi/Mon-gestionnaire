@@ -7,7 +7,7 @@ class TaskManagerApp(QMainWindow):
         super().__init__()
         self.setWindowTitle("Gestionnaire de Tâches")
         self.setGeometry(100, 100, 600, 400)  # Ajustement de la taille de la fenêtre
-        self.setStyleSheet("background-color: gray;")
+        
 
 
         # Création du groupe de boîtes pour centrer les éléments
@@ -74,7 +74,7 @@ class TaskManagerApp(QMainWindow):
 
         # Bouton pour marquer une tâche comme complétée
         complete_button = QPushButton("Marqué comme ...")
-        complete_button.clicked.connect(self.show_completion_options)
+        complete_button.clicked.connect(self.complete_task)
         button_layout.addWidget(complete_button)
 
         # Ajout du layout horizontal des boutons au layout principal
@@ -150,30 +150,12 @@ class TaskManagerApp(QMainWindow):
         except FileNotFoundError:
             pass
 
-    def show_completion_options(self):
+        # Pour complÃ©ter des tÃ¢ches
+    def complete_task(self):
         selected_items = self.task_list.selectedItems()
-        if not selected_items:
-            return
-
-        completion_options = QMessageBox(self)
-        completion_options.setWindowTitle("Options de Complétion")
-        completion_options.setText("Sélectionnez l'état de la tâche:")
-        completion_options.addButton("Terminé", QMessageBox.AcceptRole)
-        completion_options.addButton("Annulé", QMessageBox.RejectRole)
-
-        def handle_completion(option):
-            if option.text() == "Terminé":
-                for item in selected_items:
-                    item.setBackground(Qt.green)
-            elif option.text() == "Annulé":
-                for item in selected_items:
-                    item.setBackground(Qt.magenta)
-
-        # Déconnexion de la fermeture de l'application
-        completion_options.rejected.connect(completion_options.reject)
-
-        completion_options.buttonClicked.connect(handle_completion)
-        completion_options.open()
+        for item in selected_items:
+            item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
+            item.setCheckState(Qt.Checked)
 
     def check_task_status(self):
         # Implémentez ici la logique pour vérifier l'état des tâches et mettre à jour l'affichage
